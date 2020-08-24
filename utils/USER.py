@@ -29,8 +29,8 @@ def get_cookie_from_login(student_id: str, password: str, cookie_file_path=COOKI
     if r.status_code == 200:
         if r.json()['e'] == 0:
             print("登录成功")
-            with open(cookie_file_path, 'wb') as f:
-                pickle.dump(r.cookies, f)
+            #with open(cookie_file_path, 'wb') as f:
+                #pickle.dump(r.cookies, f)
             return r.cookies
         else:
             print(r.json()['m'])
