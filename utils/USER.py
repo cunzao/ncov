@@ -13,9 +13,7 @@ DEFAULT_HEADER = {
 
 LOGIN_URL = "https://xxcapp.xidian.edu.cn/uc/wap/login/check"
 
-COOKIE_FILE_NAME = "data/cookie.txt"
-CONFIG_PATH = "data/config.json"
-
+COOKIE_FILE_NAME = "data/cookie.inf"
 
 def get_cookie_from_login(student_id: str, password: str, cookie_file_path=COOKIE_FILE_NAME):
     """
@@ -28,7 +26,8 @@ def get_cookie_from_login(student_id: str, password: str, cookie_file_path=COOKI
     r = requests.post(LOGIN_URL, data={"username": student_id, "password": password}, headers=DEFAULT_HEADER)
     if r.status_code == 200:
         if r.json()['e'] == 0:
-            print("登录成功")
+            print("登录成功，已为您自动开通免密支付，以后无需输入密码，嘤～")
+            # 写入cookie文件，下次免密登录
             with open(cookie_file_path, 'wb') as f:
                 pickle.dump(r.cookies, f)
             return r.cookies
@@ -47,7 +46,7 @@ def load_cookie_from_file(cookie_file_path=COOKIE_FILE_NAME):
         return pickle.load(f)
 
 
-def login():
+def login(config):
     """
     登录的高阶API
     将登录操作的细节进行隐藏
@@ -57,8 +56,6 @@ def login():
     if os.path.exists(COOKIE_FILE_NAME):
         _cookies = load_cookie_from_file(COOKIE_FILE_NAME)
     else:
-        config_file = open(CONFIG_PATH, 'r', encoding="utf-8")
-        config = json.load(config_file)
         stu_num = config["stuNum"]
         password = config["passWord"]
         _cookies = get_cookie_from_login(stu_num, password)
